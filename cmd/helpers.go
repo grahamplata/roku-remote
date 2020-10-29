@@ -32,16 +32,15 @@ func handleNewDevices(devices []roku.Roku) {
 
 // AddToConfigFile add a key value pair to specified .roku-remote.yaml
 func AddToConfigFile(key string, value string) {
-	viper.SetDefault(key, value)
-
+	viper.Set(key, value)
 	home, err := homedir.Dir()
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	path := fmt.Sprintf(home + "/.roku-remote.yaml")
 	err = viper.WriteConfigAs(path)
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("Updated local configfile:", path)
 }
