@@ -4,16 +4,30 @@ A go cli for interacting with Roku devices on your home network.
 
 ## Setup
 
+Build it yourself
+
 ```shell
-some command
+git clone git@github.com:grahamplata/roku-remote.git
+cd roku-remote
+go build -o roku-remote -v .
+```
+
+Get it from Releases Page
+
+```shell
+Coming Soon
+```
+
+Get it on brew
+
+```shell
+Coming Soon
 ```
 
 ## Usage
 
 ```shell
-Using External Control Protocol your Roku device is exposed over a local area network.
-
-Using SSDP (Simple Service Discovery Protocol) and asimple RESTful API
+Using SSDP (Simple Service Discovery Protocol) access your Rokus RESTful API
 
 Usage:
   roku-remote [command]
@@ -21,7 +35,7 @@ Usage:
 Available Commands:
   find        Find Roku Remotes on your local network.
   help        Help about any command
-  live        A glimpse into what is currently playing on the Roku.
+  live        Stats about the devices media player.
   send        Send an action to your Roku Device.
 
 Flags:
@@ -30,6 +44,15 @@ Flags:
       --host string     host ip of the roku
 
 Use "roku-remote [command] --help" for more information about a command.
+```
+
+## Available Actions
+
+```shell
+Navigation:  left, right, up, down, select, home, search
+Keyboard:    backspace, enter
+Remote:      fwd, rev, play, replay, tuner, poweroff, channeldown, channelup, volumedown, volumeup,  info, mute, replay
+Inputs:      HDMI1, HDMI2, HDMI3, HDMI4
 ```
 
 ## Configuration

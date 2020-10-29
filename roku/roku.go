@@ -117,7 +117,7 @@ func (r *Roku) Player() (a *Player, err error) {
 }
 
 // FetchInstalledApps locates all the installed applications on the Roku
-func (r *Roku) FetchInstalledApps() (*Apps, error) {
+func (r *Roku) FetchInstalledApps() {
 	a := new(Apps)
 	resp, err := r.Client.Get(r.IP + endpoints["apps"])
 	if err != nil {
@@ -126,8 +126,7 @@ func (r *Roku) FetchInstalledApps() (*Apps, error) {
 	defer resp.Body.Close()
 	buf, _ := ioutil.ReadAll(resp.Body)
 	xml.Unmarshal(buf, &a)
-
-	return a, err
+	r.Apps = a
 }
 
 // Display shows information about the Roku device

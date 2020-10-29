@@ -17,9 +17,7 @@ var home string
 var rootCmd = &cobra.Command{
 	Use:   "roku-remote",
 	Short: "A cli tool to interact with roku devices on your local network.",
-	Long: `Using External Control Protocol your Roku device is exposed over a local area network.
-
-Using SSDP (Simple Service Discovery Protocol) and asimple RESTful API`,
+	Long:  `Using SSDP (Simple Service Discovery Protocol) access your Roku's RESTful API`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

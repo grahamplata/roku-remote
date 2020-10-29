@@ -11,8 +11,8 @@ import (
 // liveCmd represents the live command
 var liveCmd = &cobra.Command{
 	Use:   "live",
-	Short: "A glimpse into what is currently playing on the Roku.",
-	Long:  `A glimpse into what is currently playing on the Roku.`,
+	Short: "Status of the Roku media player.",
+	Long:  `Status and details about the current state of the Roku's media player.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ip := viper.GetString("roku.host")
 		if ip == "" {
