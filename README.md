@@ -12,18 +12,6 @@ cd roku-remote
 go build -o roku-remote -v .
 ```
 
-Get it from Releases Page
-
-```shell
-Coming Soon
-```
-
-Get it on brew
-
-```shell
-Coming Soon
-```
-
 ## Usage
 
 ```shell
@@ -46,13 +34,84 @@ Flags:
 Use "roku-remote [command] --help" for more information about a command.
 ```
 
-## Available Actions
+### find
+
+```shell
+roku-remote find
+
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Select a default Roku from your network:
+  ▸ http://192.168.10.95:8060/
+    http://192.168.10.122:8060/
+```
+
+### help
+
+```shell
+roku-remote find
+
+Using SSDP (Simple Service Discovery Protocol) access your Roku's RESTful API
+
+Usage:
+  roku-remote [command]
+
+Available Commands:
+  apps        List the applications on your Roku.
+  find        Find Roku Remotes on your local network.
+  help        Help about any command
+  live        Status of the Roku media player.
+  send        Send an action to your Roku Device.
+
+Flags:
+      --config string   config file (default is $HOME/.roku-remote.yaml)
+  -h, --help            help for roku-remote
+      --host string     host ip of the roku
+
+Use "roku-remote [command] --help" for more information about a command.
+```
+
+### live
+
+```shell
+roku-remote live
+
+Playing: Plex - Stream for Free
+Watched: 23m10.633
+```
+
+### send
+
+```shell
+roku-remote send select
+
+Sent select action to Roku
+```
+
+#### Available Actions
 
 ```shell
 Navigation:  left, right, up, down, select, home, search
 Keyboard:    backspace, enter
 Remote:      fwd, rev, play, replay, tuner, poweroff, channeldown, channelup, volumedown, volumeup,  info, mute, replay
 Inputs:      HDMI1, HDMI2, HDMI3, HDMI4
+```
+
+### apps
+
+```shell
+roku-remote send apps
+
+The following apps are installed on this Roku
+---
+ID: 31012 Name: FandangoNOW Movies & TV Version: 1.9.34
+ID: 12 Name: Netflix Version: 4.2.81121084
+ID: 837 Name: YouTube Version: 1.0.80000314
+ID: 13 Name: Prime Video Version: 11.4.2020092816
+ID: 50539 Name: Twitch Version: 1.0.16
+ID: 13535 Name: Plex - Stream for Free Version: 6.6.16
+ID: 151908 Name: The Roku Channel Version: 2.9.42
+ID: 34376 Name: ESPN Version: 3.2.2020092400
+ID: 552944 Name: Roku Tips & Tricks Version: 1.2.55
 ```
 
 ## Configuration
@@ -67,23 +126,24 @@ roku:
 
 ```shell
 .
-├── cmd
-│   ├── root.go
-│   ├── find.go
-│   ├── live.go
-│   ├── send.go
-│   └── helpers.go
-├── roku
-│   ├── config.go
-│   ├── instructions.go
-│   └── roku.go
 ├── LICENSE
 ├── README.md
+├── cmd
+│   ├── apps.go
+│   ├── find.go
+│   ├── helpers.go
+│   ├── live.go
+│   ├── root.go
+│   └── send.go
 ├── go.mod
 ├── go.sum
-└── main.go
+├── main.go
+└── roku
+    ├── config.go
+    ├── instructions.go
+    └── roku.go
 
-3 directories, 15 files
+8 directories, 22 files
 
 ```
 
