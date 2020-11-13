@@ -100,19 +100,27 @@ Inputs:      HDMI1, HDMI2, HDMI3, HDMI4
 ### apps
 
 ```shell
-roku-remote send apps
+apps is for interacting with channels on your Roku
 
-The following apps are installed on this Roku
----
-ID: 31012 Name: FandangoNOW Movies & TV Version: 1.9.34
-ID: 12 Name: Netflix Version: 4.2.81121084
-ID: 837 Name: YouTube Version: 1.0.80000314
-ID: 13 Name: Prime Video Version: 11.4.2020092816
-ID: 50539 Name: Twitch Version: 1.0.16
-ID: 13535 Name: Plex - Stream for Free Version: 6.6.16
-ID: 151908 Name: The Roku Channel Version: 2.9.42
-ID: 34376 Name: ESPN Version: 3.2.2020092400
-ID: 552944 Name: Roku Tips & Tricks Version: 1.2.55
+Add, Launch and List available channels.
+
+Usage:
+  roku-remote apps [flags]
+  roku-remote apps [command]
+
+Available Commands:
+  add         Add applications to your Roku.
+  launch      Launch applications on your Roku.
+  list        List the applications on your Roku.
+
+Flags:
+  -h, --help   help for apps
+
+Global Flags:
+      --config string   config file (default is $HOME/.roku-remote.yaml)
+      --host string     host ip of the roku
+
+Use "roku-remote apps [command] --help" for more information about a command.
 ```
 
 ## Configuration
@@ -140,12 +148,10 @@ roku:
 ├── go.sum
 ├── main.go
 └── roku
+    ├── apps.go
     ├── config.go
     ├── instructions.go
     └── roku.go
-
-8 directories, 22 files
-
 ```
 
 ## Notes
