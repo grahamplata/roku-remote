@@ -50,7 +50,7 @@ Usage: roku-remote apps list`,
 		}
 		r := roku.New(ip)
 		r.FetchInstalledApps()
-		r.Apps.DisplayAll()
+		r.Apps.List()
 	},
 }
 

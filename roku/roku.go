@@ -80,8 +80,8 @@ func (a *App) Details() {
 	fmt.Println(details)
 }
 
-// DisplayAll prints all the available apps found
-func (a *Apps) DisplayAll() {
+// List prints all the available apps found
+func (a *Apps) List() {
 	fmt.Println("\nThe following apps are installed on this Roku\n---")
 	for _, app := range a.Apps {
 		app.Details()
