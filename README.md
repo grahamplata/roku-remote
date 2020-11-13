@@ -15,15 +15,16 @@ go build -o roku-remote -v .
 ## Usage
 
 ```shell
-Using SSDP (Simple Service Discovery Protocol) access your Rokus RESTful API
+Using SSDP (Simple Service Discovery Protocol) access your Roku's RESTful API
 
 Usage:
   roku-remote [command]
 
 Available Commands:
+  apps        List the applications on your Roku.
   find        Find Roku Remotes on your local network.
   help        Help about any command
-  live        Stats about the devices media player.
+  live        Status of the Roku media player.
   send        Send an action to your Roku Device.
 
 Flags:

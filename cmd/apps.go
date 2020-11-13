@@ -8,20 +8,44 @@ import (
 	"github.com/spf13/viper"
 )
 
-// appsCmd represents the apps command
 var appsCmd = &cobra.Command{
 	Use:   "apps",
-	Short: "List the applications on your Roku.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Interact with Channels on your Roku.",
+	Long: `apps is for interacting with channels on your Roku
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Add, Remove and List available channels.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(`Apps is for interacting with channels on your Roku Add, Remove and List available channels.`)
+	},
+}
+
+var addCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add applications to your Roku.",
+	Long: `Add applications by name or id to your Roku.
+
+Usage: roku-remote apps add netflix`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ip := viper.GetString("roku.host")
 		if ip == "" {
-			fmt.Println("Consider running the find command first to set a default device")
+			fmt.Println(roku.NoDefaultRoku)
+			return
+		}
+		r := roku.New(ip)
+		r.Install(args[0])
+	},
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List the applications on your Roku.",
+	Long: `List the applications on your Roku.
+
+Usage: roku-remote apps list`,
+	Run: func(cmd *cobra.Command, args []string) {
+		ip := viper.GetString("roku.host")
+		if ip == "" {
+			fmt.Println(roku.NoDefaultRoku)
 			return
 		}
 		r := roku.New(ip)
@@ -30,8 +54,26 @@ to quickly create a Cobra application.`,
 	},
 }
 
+var launchCmd = &cobra.Command{
+	Use:   "launch",
+	Short: "Launch applications on your Roku.",
+	Long: `Launch applications on your Roku.
+
+Usage: roku-remote apps launch netflix`,
+	Run: func(cmd *cobra.Command, args []string) {
+		ip := viper.GetString("roku.host")
+		if ip == "" {
+			fmt.Println(roku.NoDefaultRoku)
+			return
+		}
+		r := roku.New(ip)
+		r.Launch(args[0])
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(appsCmd)
+	appsCmd.AddCommand(addCmd, listCmd, launchCmd)
 
 	// Here you will define your flags and configuration settings.
 

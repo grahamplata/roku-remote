@@ -13,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -102,6 +103,21 @@ func (r *Roku) Action(action string) {
 	}
 }
 
+// Launch an application on the Roku device
+func (r *Roku) Launch(app string) {
+	if val, ok := apps[app]; ok {
+		fmt.Println(fmt.Sprintf("Launching %s", app))
+		endpoint := fmt.Sprintf(r.IP + endpoints["launch"] + strconv.Itoa(val))
+		resp, err := r.Client.Post(endpoint, "application/json", nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer resp.Body.Close()
+	} else {
+		fmt.Println(fmt.Sprintf("%s is not available", app))
+	}
+}
+
 // Player the current stream segment and position of the content being played, the running time of the content, audio format, and buffering.
 func (r *Roku) Player() (a *Player, err error) {
 	endpoint := fmt.Sprintf(r.IP + endpoints["player"])
@@ -134,6 +150,21 @@ func (r *Roku) Display() {
 	u, _ := url.Parse(r.IP)
 	host, _, _ := net.SplitHostPort(u.Host)
 	fmt.Println("Roku found:", host)
+}
+
+// Install adds the supplied application to the roku
+func (r *Roku) Install(app string) {
+	if val, ok := apps[app]; ok {
+		fmt.Println(fmt.Sprintf("Installing %s", app))
+		endpoint := fmt.Sprintf(r.IP + endpoints["install"] + strconv.Itoa(val))
+		resp, err := r.Client.Post(endpoint, "application/json", nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer resp.Body.Close()
+	} else {
+		fmt.Println(fmt.Sprintf("%s is not available", app))
+	}
 }
 
 // New creates a new Roku Device
