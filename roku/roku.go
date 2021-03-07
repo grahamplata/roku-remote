@@ -27,8 +27,47 @@ type Roku struct {
 	Client *http.Client `yaml:"-"`
 }
 
-// Device type encapsulates
+type service struct {
+	ServiceType string `xml:"serviceType"`
+	ServiceID   string `xml:"serviceId"`
+	ControlURL  string `xml:"controlURL"`
+	EventSubURL string `xml:"eventSubURL"`
+	SCPDURL     string `xml:"SCPDURL"`
+}
+
+type serviceList struct {
+	Services []service `xml:"service"`
+}
+
+type specVersion struct {
+	Major int `xml:"major"`
+	Minor int `xml:"minor"`
+}
+
+// Device type encapsulates the roku device
 type Device struct {
+	DeviceType       string      `xml:"deviceType"`
+	FriendlyName     string      `xml:"friendlyName"`
+	Manufacturer     string      `xml:"manufacturer"`
+	ManufacturerURL  string      `xml:"manufacturerURL"`
+	ModelDescription string      `xml:"modelDescription"`
+	ModelName        string      `xml:"modelName"`
+	ModelNumber      string      `xml:"modelNumber"`
+	ModelURL         string      `xml:"modelURL"`
+	SerialNumber     string      `xml:"serialNumber"`
+	UDN              string      `xml:"UDN"`
+	ServiceList      serviceList `xml:"serviceList"`
+}
+
+// Info type encapsulates the roku device info at the root endpoint
+type Info struct {
+	XMLName xml.Name    `xml:"root" json:"-"`
+	Version specVersion `xml:"specVersion"`
+	Device  Device      `xml:"device"`
+}
+
+// DeviceInfo type encapsulates
+type DeviceInfo struct {
 	XMLName                  xml.Name `xml:"device-info" json:"-"`
 	Text                     string   `xml:",chardata" json:"text,omitempty"`
 	Udn                      string   `xml:"udn" json:"udn,omitempty"`
@@ -92,15 +131,13 @@ type Device struct {
 	DavinciVersion           string   `xml:"davinci-version" json:"davinci_version,omitempty"`
 }
 
-// Plugin type of roku media player
-type Plugin struct {
+type plugin struct {
 	ID        string `xml:"id,attr"`
 	Bandwidth string `xml:"bandwidth,attr"`
 	Name      string `xml:"name,attr"`
 }
 
-// Format of roku media player
-type Format struct {
+type format struct {
 	Audio    string `xml:"audio,attr"`
 	Video    string `xml:"captions,attr"`
 	Captions string `xml:"drm,attr"`
@@ -111,8 +148,8 @@ type Format struct {
 type Player struct {
 	Error    string `xml:"error,attr"`
 	State    string `xml:"state,attr"`
-	Plugin   Plugin `xml:"plugin"`
-	Format   Format `xml:"format"`
+	Plugin   plugin `xml:"plugin"`
+	Format   format `xml:"format"`
 	Position string `xml:"position"`
 	Live     bool   `xml:"is_live"`
 }
@@ -131,8 +168,22 @@ type App struct {
 	Version string `xml:"version,attr" yaml:"version"`
 }
 
+// Info prints the available information about a Roku device
+func (r *Roku) Info() (i *Info, err error) {
+	endpoint := fmt.Sprintf(r.IP)
+	resp, err := r.Client.Get(endpoint)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+
+	buf, _ := ioutil.ReadAll(resp.Body)
+	xml.Unmarshal(buf, &i)
+	return i, nil
+}
+
 // Describe prints the available information about a Roku device
-func (r *Roku) Describe() (d *Device, err error) {
+func (r *Roku) Describe() (d *DeviceInfo, err error) {
 	endpoint := fmt.Sprintf(r.IP + endpoints["device"])
 	resp, err := r.Client.Get(endpoint)
 	if err != nil {
