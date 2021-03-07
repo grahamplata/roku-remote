@@ -89,6 +89,7 @@ type DeviceInfo struct {
 	FriendlyDeviceName       string   `xml:"friendly-device-name" json:"friendly_device_name,omitempty"`
 	FriendlyModelName        string   `xml:"friendly-model-name" json:"friendly_model_name,omitempty"`
 	DefaultDeviceName        string   `xml:"default-device-name" json:"default_device_name,omitempty"`
+	DeviceLocation           string   `xml:"user-device-location" json:"user_device_location,omitempty"`
 	UserDeviceName           string   `xml:"user-device-name" json:"user_device_name,omitempty"`
 	BuildNumber              string   `xml:"build-number" json:"build_number,omitempty"`
 	SoftwareVersion          string   `xml:"software-version" json:"software_version,omitempty"`
@@ -194,6 +195,12 @@ func (r *Roku) Describe() (d *DeviceInfo, err error) {
 	buf, _ := ioutil.ReadAll(resp.Body)
 	xml.Unmarshal(buf, &d)
 	return d, nil
+}
+
+// Show prints the available information about a Roku device
+func (d *Device) Show() {
+	info := fmt.Sprintf("%s %s", d.ModelName, d.ModelNumber)
+	fmt.Println(info)
 }
 
 // Details prints the available information about a Roku player
