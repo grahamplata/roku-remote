@@ -88,6 +88,19 @@ roku-remote send select
 Sent select action to Roku
 ```
 
+### describe
+
+```shell
+roku-remote send select
+
+Vendor:  Roku
+Model:   Roku Express+ 3710X
+Network: Free-Wifi
+MAC:     xx:xx:xx:xx:xx:xx
+Uptime:  30549
+Version: v9.4.0
+```
+
 #### Available Actions
 
 ```shell
