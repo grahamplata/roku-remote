@@ -27,15 +27,118 @@ type Roku struct {
 	Client *http.Client `yaml:"-"`
 }
 
-// Plugin type of roku media player
-type Plugin struct {
+type service struct {
+	ServiceType string `xml:"serviceType"`
+	ServiceID   string `xml:"serviceId"`
+	ControlURL  string `xml:"controlURL"`
+	EventSubURL string `xml:"eventSubURL"`
+	SCPDURL     string `xml:"SCPDURL"`
+}
+
+type serviceList struct {
+	Services []service `xml:"service"`
+}
+
+type specVersion struct {
+	Major int `xml:"major"`
+	Minor int `xml:"minor"`
+}
+
+// Device type encapsulates the roku device
+type Device struct {
+	DeviceType       string      `xml:"deviceType"`
+	FriendlyName     string      `xml:"friendlyName"`
+	Manufacturer     string      `xml:"manufacturer"`
+	ManufacturerURL  string      `xml:"manufacturerURL"`
+	ModelDescription string      `xml:"modelDescription"`
+	ModelName        string      `xml:"modelName"`
+	ModelNumber      string      `xml:"modelNumber"`
+	ModelURL         string      `xml:"modelURL"`
+	SerialNumber     string      `xml:"serialNumber"`
+	UDN              string      `xml:"UDN"`
+	ServiceList      serviceList `xml:"serviceList"`
+}
+
+// Info type encapsulates the roku device info at the root endpoint
+type Info struct {
+	XMLName xml.Name    `xml:"root" json:"-"`
+	Version specVersion `xml:"specVersion"`
+	Device  Device      `xml:"device"`
+}
+
+// DeviceInfo type encapsulates
+type DeviceInfo struct {
+	XMLName                  xml.Name `xml:"device-info" json:"-"`
+	Text                     string   `xml:",chardata" json:"text,omitempty"`
+	Udn                      string   `xml:"udn" json:"udn,omitempty"`
+	SerialNumber             string   `xml:"serial-number" json:"serial_number,omitempty"`
+	DeviceID                 string   `xml:"device-id" json:"device_id,omitempty"`
+	AdvertisingID            string   `xml:"advertising-id" json:"advertising_id,omitempty"`
+	VendorName               string   `xml:"vendor-name" json:"vendor_name,omitempty"`
+	ModelName                string   `xml:"model-name" json:"model_name,omitempty"`
+	ModelNumber              string   `xml:"model-number" json:"model_number,omitempty"`
+	ModelRegion              string   `xml:"model-region" json:"model_region,omitempty"`
+	IsTv                     string   `xml:"is-tv" json:"is_tv,omitempty"`
+	IsStick                  string   `xml:"is-stick" json:"is_stick,omitempty"`
+	SupportsEthernet         string   `xml:"supports-ethernet" json:"supports_ethernet,omitempty"`
+	WifiMac                  string   `xml:"wifi-mac" json:"wifi_mac,omitempty"`
+	WifiDriver               string   `xml:"wifi-driver" json:"wifi_driver,omitempty"`
+	EthernetMac              string   `xml:"ethernet-mac" json:"ethernet_mac,omitempty"`
+	NetworkType              string   `xml:"network-type" json:"network_type,omitempty"`
+	NetworkName              string   `xml:"network-name" json:"network_name,omitempty"`
+	FriendlyDeviceName       string   `xml:"friendly-device-name" json:"friendly_device_name,omitempty"`
+	FriendlyModelName        string   `xml:"friendly-model-name" json:"friendly_model_name,omitempty"`
+	DefaultDeviceName        string   `xml:"default-device-name" json:"default_device_name,omitempty"`
+	DeviceLocation           string   `xml:"user-device-location" json:"user_device_location,omitempty"`
+	UserDeviceName           string   `xml:"user-device-name" json:"user_device_name,omitempty"`
+	BuildNumber              string   `xml:"build-number" json:"build_number,omitempty"`
+	SoftwareVersion          string   `xml:"software-version" json:"software_version,omitempty"`
+	SoftwareBuild            string   `xml:"software-build" json:"software_build,omitempty"`
+	SecureDevice             string   `xml:"secure-device" json:"secure_device,omitempty"`
+	Language                 string   `xml:"language" json:"language,omitempty"`
+	Country                  string   `xml:"country" json:"country,omitempty"`
+	Locale                   string   `xml:"locale" json:"locale,omitempty"`
+	TimeZoneAuto             string   `xml:"time-zone-auto" json:"time_zone_auto,omitempty"`
+	TimeZone                 string   `xml:"time-zone" json:"time_zone,omitempty"`
+	TimeZoneName             string   `xml:"time-zone-name" json:"time_zone_name,omitempty"`
+	TimeZoneTz               string   `xml:"time-zone-tz" json:"time_zone_tz,omitempty"`
+	TimeZoneOffset           string   `xml:"time-zone-offset" json:"time_zone_offset,omitempty"`
+	ClockFormat              string   `xml:"clock-format" json:"clock_format,omitempty"`
+	Uptime                   string   `xml:"uptime" json:"uptime,omitempty"`
+	PowerMode                string   `xml:"power-mode" json:"power_mode,omitempty"`
+	SupportsSuspend          string   `xml:"supports-suspend" json:"supports_suspend,omitempty"`
+	SupportsFindRemote       string   `xml:"supports-find-remote" json:"supports_find_remote,omitempty"`
+	FindRemoteIsPossible     string   `xml:"find-remote-is-possible" json:"find_remote_is_possible,omitempty"`
+	SupportsAudioGuide       string   `xml:"supports-audio-guide" json:"supports_audio_guide,omitempty"`
+	SupportsRva              string   `xml:"supports-rva" json:"supports_rva,omitempty"`
+	DeveloperEnabled         string   `xml:"developer-enabled" json:"developer_enabled,omitempty"`
+	KeyedDeveloperID         string   `xml:"keyed-developer-id" json:"keyed_developer_id,omitempty"`
+	SearchEnabled            string   `xml:"search-enabled" json:"search_enabled,omitempty"`
+	SearchChannelsEnabled    string   `xml:"search-channels-enabled" json:"search_channels_enabled,omitempty"`
+	VoiceSearchEnabled       string   `xml:"voice-search-enabled" json:"voice_search_enabled,omitempty"`
+	NotificationsEnabled     string   `xml:"notifications-enabled" json:"notifications_enabled,omitempty"`
+	NotificationsFirstUse    string   `xml:"notifications-first-use" json:"notifications_first_use,omitempty"`
+	SupportsPrivateListening string   `xml:"supports-private-listening" json:"supports_private_listening,omitempty"`
+	HeadphonesConnected      string   `xml:"headphones-connected" json:"headphones_connected,omitempty"`
+	SupportsEcsTextedit      string   `xml:"supports-ecs-textedit" json:"supports_ecs_textedit,omitempty"`
+	SupportsEcsMicrophone    string   `xml:"supports-ecs-microphone" json:"supports_ecs_microphone,omitempty"`
+	SupportsWakeOnWlan       string   `xml:"supports-wake-on-wlan" json:"supports_wake_on_wlan,omitempty"`
+	HasPlayOnRoku            string   `xml:"has-play-on-roku" json:"has_play_on_roku,omitempty"`
+	HasMobileScreensaver     string   `xml:"has-mobile-screensaver" json:"has_mobile_screensaver,omitempty"`
+	SupportURL               string   `xml:"support-url" json:"support_url,omitempty"`
+	GrandcentralVersion      string   `xml:"grandcentral-version" json:"grandcentral_version,omitempty"`
+	TrcVersion               string   `xml:"trc-version" json:"trc_version,omitempty"`
+	TrcChannelVersion        string   `xml:"trc-channel-version" json:"trc_channel_version,omitempty"`
+	DavinciVersion           string   `xml:"davinci-version" json:"davinci_version,omitempty"`
+}
+
+type plugin struct {
 	ID        string `xml:"id,attr"`
 	Bandwidth string `xml:"bandwidth,attr"`
 	Name      string `xml:"name,attr"`
 }
 
-// Format of roku media player
-type Format struct {
+type format struct {
 	Audio    string `xml:"audio,attr"`
 	Video    string `xml:"captions,attr"`
 	Captions string `xml:"drm,attr"`
@@ -46,8 +149,8 @@ type Format struct {
 type Player struct {
 	Error    string `xml:"error,attr"`
 	State    string `xml:"state,attr"`
-	Plugin   Plugin `xml:"plugin"`
-	Format   Format `xml:"format"`
+	Plugin   plugin `xml:"plugin"`
+	Format   format `xml:"format"`
 	Position string `xml:"position"`
 	Live     bool   `xml:"is_live"`
 }
@@ -64,6 +167,53 @@ type App struct {
 	Type    string `xml:"type,attr" yaml:"type"`
 	SubType string `xml:"subtype,attr" yaml:"sub_type"`
 	Version string `xml:"version,attr" yaml:"version"`
+}
+
+// Info prints the available information about a Roku device
+func (r *Roku) Info() (i *Info, err error) {
+	endpoint := fmt.Sprintf(r.IP)
+	resp, err := r.Client.Get(endpoint)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+
+	buf, _ := ioutil.ReadAll(resp.Body)
+	xml.Unmarshal(buf, &i)
+	return i, nil
+}
+
+// Describe prints the available information about a Roku device
+func (r *Roku) Describe() (d *DeviceInfo, err error) {
+	endpoint := fmt.Sprintf(r.IP + endpoints["device"])
+	resp, err := r.Client.Get(endpoint)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+
+	buf, _ := ioutil.ReadAll(resp.Body)
+	xml.Unmarshal(buf, &d)
+	return d, nil
+}
+
+// Show prints the available information about a Roku device
+func (d *DeviceInfo) Show() {
+	resp := `Vendor:  %s
+Model:   %s %s
+Network: %s
+MAC:     %s
+Uptime:  %s
+Version: v%s
+`
+	info := fmt.Sprintf(resp, d.VendorName, d.ModelName, d.ModelNumber, d.NetworkName, d.WifiMac, d.Uptime, d.SoftwareVersion)
+	fmt.Println(info)
+}
+
+// Show prints the available information about a Roku device
+func (d *Device) Show() {
+	info := fmt.Sprintf("%s %s", d.ModelName, d.ModelNumber)
+	fmt.Println(info)
 }
 
 // Details prints the available information about a Roku player
