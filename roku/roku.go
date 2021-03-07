@@ -133,7 +133,7 @@ type App struct {
 
 // Describe prints the available information about a Roku device
 func (r *Roku) Describe() (d *Device, err error) {
-	endpoint := fmt.Sprintf(r.IP + endpoints["base"])
+	endpoint := fmt.Sprintf(r.IP + endpoints["device"])
 	resp, err := r.Client.Get(endpoint)
 	if err != nil {
 		fmt.Println(err)

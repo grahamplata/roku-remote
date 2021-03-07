@@ -20,7 +20,6 @@ var DefaultScanDuration = 10
 
 // endpoints ... https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#general-ecp-commands
 var endpoints = map[string]string{
-	"base":     "/",
 	"apps":     "/query/apps",
 	"active":   "/query/active-app",
 	"player":   "/query/media-player",
