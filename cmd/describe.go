@@ -22,7 +22,7 @@ fetches details about the device like make, model and services.`,
 		}
 		r := roku.New(ip)
 		d, _ := r.Describe()
-		fmt.Println(d)
+		d.Show()
 	},
 }
 

@@ -198,6 +198,19 @@ func (r *Roku) Describe() (d *DeviceInfo, err error) {
 }
 
 // Show prints the available information about a Roku device
+func (d *DeviceInfo) Show() {
+	resp := `Vendor:  %s
+Model:   %s %s
+Network: %s
+MAC:     %s
+Uptime:  %s
+Version: v%s
+`
+	info := fmt.Sprintf(resp, d.VendorName, d.ModelName, d.ModelNumber, d.NetworkName, d.WifiMac, d.Uptime, d.SoftwareVersion)
+	fmt.Println(info)
+}
+
+// Show prints the available information about a Roku device
 func (d *Device) Show() {
 	info := fmt.Sprintf("%s %s", d.ModelName, d.ModelNumber)
 	fmt.Println(info)
