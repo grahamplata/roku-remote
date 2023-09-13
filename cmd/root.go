@@ -11,7 +11,6 @@ import (
 )
 
 var cfgFile string
-var home string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -38,8 +37,11 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.roku-remote.yaml)")
 	rootCmd.PersistentFlags().String("host", "", "host ip of the roku")
-	viper.BindPFlag("roku.host", rootCmd.PersistentFlags().Lookup("host"))
-
+	err := viper.BindPFlag("roku.host", rootCmd.PersistentFlags().Lookup("host"))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -70,5 +72,9 @@ func initConfig() {
 		// fmt.Println("Using config file:", viper.ConfigFileUsed())
 		fmt.Println("")
 	}
-	viper.WriteConfig()
+	err := viper.WriteConfig()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

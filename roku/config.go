@@ -1,7 +1,6 @@
 package roku
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -71,5 +70,5 @@ func AvialableActions() string {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	return fmt.Sprintf(strings.Join(keys, ", "))
+	return strings.Join(keys, ", ")
 }
