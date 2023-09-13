@@ -179,7 +179,12 @@ func (r *Roku) Info() (i *Info, err error) {
 	defer resp.Body.Close()
 
 	buf, _ := ioutil.ReadAll(resp.Body)
-	xml.Unmarshal(buf, &i)
+	// xml.Unmarshal(buf, &i)
+	err = xml.Unmarshal(buf, &i)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return nil, err
+	}
 	return i, nil
 }
 
@@ -193,7 +198,11 @@ func (r *Roku) Describe() (d *DeviceInfo, err error) {
 	defer resp.Body.Close()
 
 	buf, _ := ioutil.ReadAll(resp.Body)
-	xml.Unmarshal(buf, &d)
+	err = xml.Unmarshal(buf, &d)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return nil, err
+	}
 	return d, nil
 }
 
@@ -241,7 +250,7 @@ func (a *Apps) List() {
 // Action pass user actions to the device
 func (r *Roku) Action(action string) {
 	if val, ok := actions[action]; ok {
-		fmt.Println(fmt.Sprintf("Sent %s action to Roku", action))
+		fmt.Printf("Sent %s action to Roku\n", action)
 		endpoint := fmt.Sprintf(r.IP + endpoints["keypress"] + val)
 		resp, err := r.Client.Post(endpoint, "application/json", nil)
 		if err != nil {
@@ -249,14 +258,14 @@ func (r *Roku) Action(action string) {
 		}
 		defer resp.Body.Close()
 	} else {
-		fmt.Println(fmt.Sprintf("%s is not available", action))
+		fmt.Printf("%s is not available", action)
 	}
 }
 
 // Launch an application on the Roku device
 func (r *Roku) Launch(app string) {
 	if val, ok := apps[app]; ok {
-		fmt.Println(fmt.Sprintf("Launching %s", app))
+		fmt.Printf("Launching %s", app)
 		endpoint := fmt.Sprintf(r.IP + endpoints["launch"] + strconv.Itoa(val))
 		resp, err := r.Client.Post(endpoint, "application/json", nil)
 		if err != nil {
@@ -264,7 +273,7 @@ func (r *Roku) Launch(app string) {
 		}
 		defer resp.Body.Close()
 	} else {
-		fmt.Println(fmt.Sprintf("%s is not available", app))
+		fmt.Printf("%s is not available", app)
 	}
 }
 
@@ -278,7 +287,11 @@ func (r *Roku) Player() (a *Player, err error) {
 	defer resp.Body.Close()
 
 	buf, _ := ioutil.ReadAll(resp.Body)
-	xml.Unmarshal(buf, &a)
+	err = xml.Unmarshal(buf, &a)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return nil, err
+	}
 	return a, nil
 }
 
@@ -291,7 +304,10 @@ func (r *Roku) FetchInstalledApps() {
 	}
 	defer resp.Body.Close()
 	buf, _ := ioutil.ReadAll(resp.Body)
-	xml.Unmarshal(buf, &a)
+	err = xml.Unmarshal(buf, &a)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+	}
 	r.Apps = a
 }
 
@@ -305,7 +321,7 @@ func (r *Roku) Display() {
 // Install adds the supplied application to the roku
 func (r *Roku) Install(app string) {
 	if val, ok := apps[app]; ok {
-		fmt.Println(fmt.Sprintf("Installing %s", app))
+		fmt.Printf("Installing %s", app)
 		endpoint := fmt.Sprintf(r.IP + endpoints["install"] + strconv.Itoa(val))
 		resp, err := r.Client.Post(endpoint, "application/json", nil)
 		if err != nil {
@@ -313,7 +329,7 @@ func (r *Roku) Install(app string) {
 		}
 		defer resp.Body.Close()
 	} else {
-		fmt.Println(fmt.Sprintf("%s is not available", app))
+		fmt.Printf("%s is not available", app)
 	}
 }
 
