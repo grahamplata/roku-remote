@@ -5,19 +5,8 @@ import (
 	"strings"
 )
 
-/*
-Roku Docs
-External Control Protocol (ECP)
-https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#keypress-key-values
-*/
-
-// RokuIdenifier is the string to look for via ssdp
-var RokuIdenifier = "roku:ecp"
-
-// DefaultScanDuration is an integer value of the amount of time to scan for devices
-var DefaultScanDuration = 10
-
-// endpoints ... https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#general-ecp-commands
+// endpoints - the available endpoints for the roku device
+// - Docs: https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#general-ecp-commands
 var endpoints = map[string]string{
 	"apps":     "/query/apps",
 	"active":   "/query/active-app",
@@ -32,7 +21,8 @@ var endpoints = map[string]string{
 	"install":  "/install",
 }
 
-// actions https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#keypress-key-values
+// actions - the available actions for the roku device
+// - Docs: https://developer.roku.com/docs/developer-program/debugging/external-control-api.md#keypress-key-values
 var actions = map[string]string{
 	"home":        "/Home",
 	"rev":         "/Rev",
