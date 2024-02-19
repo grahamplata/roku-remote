@@ -9,7 +9,7 @@ https://developer.roku.com/docs/developer-program/debugging/external-control-api
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -178,8 +178,8 @@ func (r *Roku) Info() (i *Info, err error) {
 	}
 	defer resp.Body.Close()
 
-	buf, _ := ioutil.ReadAll(resp.Body)
-	// xml.Unmarshal(buf, &i)
+	buf, _ := io.ReadAll(resp.Body)
+
 	err = xml.Unmarshal(buf, &i)
 	if err != nil {
 		fmt.Printf("error: %v", err)
@@ -197,7 +197,7 @@ func (r *Roku) Describe() (d *DeviceInfo, err error) {
 	}
 	defer resp.Body.Close()
 
-	buf, _ := ioutil.ReadAll(resp.Body)
+	buf, _ := io.ReadAll(resp.Body)
 	err = xml.Unmarshal(buf, &d)
 	if err != nil {
 		fmt.Printf("error: %v", err)
@@ -286,7 +286,7 @@ func (r *Roku) Player() (a *Player, err error) {
 	}
 	defer resp.Body.Close()
 
-	buf, _ := ioutil.ReadAll(resp.Body)
+	buf, _ := io.ReadAll(resp.Body)
 	err = xml.Unmarshal(buf, &a)
 	if err != nil {
 		fmt.Printf("error: %v", err)
@@ -303,7 +303,7 @@ func (r *Roku) FetchInstalledApps() {
 		fmt.Println(err)
 	}
 	defer resp.Body.Close()
-	buf, _ := ioutil.ReadAll(resp.Body)
+	buf, _ := io.ReadAll(resp.Body)
 	err = xml.Unmarshal(buf, &a)
 	if err != nil {
 		fmt.Printf("error: %v", err)
