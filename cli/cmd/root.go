@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/grahamplata/roku-remote/cli/cmd/apps"
-	"github.com/grahamplata/roku-remote/cli/cmd/devices"
+	"github.com/grahamplata/roku-remote/cli/cmd/device"
 	"github.com/grahamplata/roku-remote/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -60,11 +60,11 @@ func RootCmd(ch *cmdutil.Helper, cfg *Config) *cobra.Command {
 
 	// Device Commands
 	cmdutil.AddGroup(rootCmd, "device",
-		devices.DescribeCmd(ch),
-		devices.FindCmd(ch),
-		devices.LiveCmd(ch),
-		devices.SendCmd(ch),
-		devices.SwitchCmd(ch),
+		device.DescribeCmd(ch),
+		device.FindCmd(ch),
+		device.LiveCmd(ch),
+		device.SendCmd(ch),
+		device.SwitchCmd(ch),
 	)
 
 	return rootCmd

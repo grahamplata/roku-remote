@@ -8,13 +8,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Helper provides utility functions for command handling
 type Helper struct{}
 
 func NewHelper() (*Helper, error) {
 	ch := &Helper{}
 
-	// Load the config from the home directory
 	home, err := homedir.Dir()
 	if err != nil {
 		return nil, fmt.Errorf("error finding home directory: %w", err)
@@ -27,7 +25,6 @@ func NewHelper() (*Helper, error) {
 
 	viper.AutomaticEnv()
 
-	// Read config if it exists
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("Config file not found or readable: %v\n", err)
 	}
@@ -38,11 +35,7 @@ func NewHelper() (*Helper, error) {
 // AddGroup adds a group of commands to the parent command.
 func AddGroup(parent *cobra.Command, title string, children ...*cobra.Command) {
 	group := &cobra.Group{ID: title, Title: title}
-
-	// Add add the group to the parent command.
 	parent.AddGroup(group)
-
-	// Add the child commands to the group.
 	for _, child := range children {
 		child.GroupID = title
 		parent.AddCommand(child)
