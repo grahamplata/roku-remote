@@ -45,7 +45,22 @@ Usage: roku-remote apps add netflix`,
 					return
 				}
 			}
-			err = device.Install(ctx, appID)
+
+			var actualID string
+			for _, app := range apps.Apps {
+				if strings.EqualFold(app.ID, appID) {
+					actualID = app.ID
+					break
+				} else if strings.EqualFold(app.Name, appID) {
+					actualID = app.ID
+					break
+				}
+			}
+			if actualID == "" {
+				fmt.Printf("App '%s' not found in Roku store. Please check the app name or use an app ID.\n", appID)
+				return
+			}
+			err = device.Install(ctx, actualID)
 			if err != nil {
 				fmt.Printf("Error installing app: %v\n", err)
 			} else {

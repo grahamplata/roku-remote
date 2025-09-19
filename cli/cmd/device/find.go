@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var DefaultScanDuration = 5
+const DefaultScanTime = 5
 
 func FindCmd(ch *cmdutil.Helper) *cobra.Command {
 	var findCmd = &cobra.Command{
@@ -40,13 +40,12 @@ static configuration, can discover network services.`,
 
 		},
 	}
-	findCmd.Flags().IntP("wait", "w", DefaultScanDuration, "Duration in seconds to scan for devices")
+	findCmd.Flags().IntP("wait", "w", DefaultScanTime, "Duration in seconds to scan for devices")
 	return findCmd
 }
 
 func handleNewDevices(devices []roku.Device) {
 	if len(devices) > 0 {
-		// Store all discovered device IPs in the config
 		var deviceIPs []string
 		for _, device := range devices {
 			deviceIPs = append(deviceIPs, device.IP)

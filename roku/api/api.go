@@ -10,6 +10,21 @@ import (
 	"encoding/xml"
 )
 
+const (
+	EndpointRoot        = "/"
+	EndpointApps        = "/query/apps"
+	EndpointDeviceInfo  = "/query/device-info"
+	EndpointActiveApp   = "/query/active-app"
+	EndpointMediaPlayer = "/query/media-player"
+	EndpointIcon        = "/query/icon/"
+	EndpointInput       = "/input"
+	EndpointSearch      = "/search"
+	EndpointKeypress    = "/keypress"
+	EndpointKeydown     = "/keydown"
+	EndpointLaunch      = "/launch"
+	EndpointInstall     = "/install"
+)
+
 // Info type encapsulates the roku device info at the root endpoint
 type Info struct {
 	XMLName xml.Name    `xml:"root" json:"-"`

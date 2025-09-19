@@ -37,18 +37,21 @@ Use 'roku apps list' to see available applications and their IDs.`,
 				fmt.Printf("Error fetching apps: %v\n", err)
 				return
 			}
-			found := false
+			var actualID string
 			for _, app := range apps.Apps {
-				if strings.EqualFold(app.ID, appID) || strings.EqualFold(app.Name, appID) {
-					found = true
+				if strings.EqualFold(app.ID, appID) {
+					actualID = app.ID
+					break
+				} else if strings.EqualFold(app.Name, appID) {
+					actualID = app.ID
 					break
 				}
 			}
-			if !found {
+			if actualID == "" {
 				fmt.Printf("App '%s' not found. Use 'roku apps list' to see available apps.\n", appID)
 				return
 			}
-			err = device.Launch(ctx, appID)
+			err = device.Launch(ctx, actualID)
 			if err != nil {
 				fmt.Printf("Error launching app: %v\n", err)
 			} else {

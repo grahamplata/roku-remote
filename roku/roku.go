@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"strings"
 
 	"github.com/grahamplata/roku-remote/roku/api"
 	"github.com/koron/go-ssdp"
@@ -13,6 +12,7 @@ import (
 // RokuIdentifier is the string to look for via ssdp
 const RokuIdentifier = "roku:ecp"
 
+// Find searches for Roku devices on the local network
 func Find(ScanDuration int) (devices []Device, err error) {
 	found, err := ssdp.Search(RokuIdentifier, ScanDuration, "")
 	if err != nil {
@@ -31,11 +31,7 @@ func Find(ScanDuration int) (devices []Device, err error) {
 	return devices, nil
 }
 
-// AvailableActions returns a formatted string of available actions
-func AvailableActions() string {
-	actions := []string{}
-	for action := range api.ExternalControlActions {
-		actions = append(actions, action)
-	}
-	return "Available actions: " + strings.Join(actions, ", ")
+// AvailableActions returns the available actions
+func AvailableActions() map[string]string {
+	return api.ExternalControlActions
 }

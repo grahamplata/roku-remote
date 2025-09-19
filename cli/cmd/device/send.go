@@ -14,7 +14,7 @@ func SendCmd(ch *cmdutil.Helper) *cobra.Command {
 	var sendCmd = &cobra.Command{
 		Use:   "send",
 		Short: "Send an action to your Roku Device.",
-		Long:  "Using the following arguments send actions to your Roku device over your network.\n\n" + roku.AvailableActions(),
+		Long:  "Using the following arguments send actions to your Roku device over your network.\n\n" + showAvailableActions(),
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := cmd.Context()
 			ip, err := ch.ValidateRokuHost()
@@ -24,14 +24,15 @@ func SendCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 
 			if len(args) > 0 {
-				action := strings.ToLower(args[0])
+				input := strings.ToLower(args[0])
 				available := roku.AvailableActions()
-				if !strings.Contains(available, action) {
-					fmt.Printf("Invalid action '%s'. %s\n", action, available)
+				_, ok := available[input]
+				if !ok {
+					fmt.Printf("Action '%s' is not recognized. %s\n", input, showAvailableActions())
 					os.Exit(1)
 				}
 				r := roku.NewDevice(ip)
-				err = r.Action(ctx, action)
+				err = r.Action(ctx, input)
 				if err != nil {
 					fmt.Printf("Error sending action: %v\n", err)
 					return
@@ -43,6 +44,15 @@ func SendCmd(ch *cmdutil.Helper) *cobra.Command {
 			os.Exit(1)
 		},
 	}
-
 	return sendCmd
+}
+
+func showAvailableActions() string {
+	actions := roku.AvailableActions()
+	var b strings.Builder
+	b.WriteString("Available Actions:\n")
+	for action := range actions {
+		b.WriteString(fmt.Sprintf(" - %s\n", action))
+	}
+	return b.String()
 }

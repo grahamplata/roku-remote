@@ -3,7 +3,6 @@ package roku
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/grahamplata/roku-remote/roku/api"
 )
@@ -16,13 +15,12 @@ type Device struct {
 	Client *api.Client
 }
 
-// NewDevice creates a new Device instance
+// NewDevice creates a new Roku Device instance
 func NewDevice(ip string) *Device {
-	httpClient := &http.Client{Timeout: 10 * time.Second}
-	client := api.NewClient(ip, httpClient)
+	httpClient := &http.Client{Timeout: api.DefaultTimeout}
 	return &Device{
 		IP:     ip,
-		Client: client,
+		Client: api.NewClient(ip, httpClient),
 	}
 }
 
@@ -38,16 +36,7 @@ func (d *Device) DeviceInfo(ctx context.Context) (*api.DeviceInfo, error) {
 
 // Action issues a remote input action to the Roku device with retries
 func (d *Device) Action(ctx context.Context, action string) error {
-	const maxRetries = 3
-	var err error
-	for i := 0; i < maxRetries; i++ {
-		err = d.Client.Keypress(ctx, action)
-		if err == nil {
-			return nil
-		}
-		time.Sleep(time.Duration(i+1) * time.Second) // Exponential backoff
-	}
-	return err
+	return d.Client.Keypress(ctx, action)
 }
 
 // Launch an application on the Roku device

@@ -10,20 +10,8 @@ import (
 	"time"
 )
 
-const (
-	EndpointRoot        = "/"
-	EndpointApps        = "/query/apps"
-	EndpointDeviceInfo  = "/query/device-info"
-	EndpointActiveApp   = "/query/active-app"
-	EndpointMediaPlayer = "/query/media-player"
-	EndpointIcon        = "/query/icon/"
-	EndpointInput       = "/input"
-	EndpointSearch      = "/search"
-	EndpointKeypress    = "/keypress"
-	EndpointKeydown     = "/keydown"
-	EndpointLaunch      = "/launch"
-	EndpointInstall     = "/install"
-)
+const RokuPort = 8060
+const DefaultTimeout = 10 * time.Second
 
 // Client is an HTTP client used to communicate with the Roku device
 type Client struct {
@@ -36,7 +24,7 @@ type Client struct {
 // NewClient creates a new API client with the provided HTTP client
 func NewClient(ip string, client *http.Client) *Client {
 	if client == nil {
-		client = &http.Client{Timeout: 10 * time.Second}
+		client = &http.Client{Timeout: DefaultTimeout}
 	}
 	return &Client{
 		ip:     ip,
@@ -139,9 +127,9 @@ func (c *Client) Install(ctx context.Context, appID string) error {
 }
 
 func (c *Client) getAndDecode(ctx context.Context, endpoint string, target interface{}) error {
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("http://%s:8060%s", c.ip, endpoint), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("http://%s:%d%s", c.ip, RokuPort, endpoint), nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request for %s%s: %w", c.ip, endpoint, err)
 	}
@@ -163,9 +151,9 @@ func (c *Client) getAndDecode(ctx context.Context, endpoint string, target inter
 }
 
 func (c *Client) post(ctx context.Context, endpoint string, data string) error {
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("http://%s:8060%s", c.ip, endpoint), strings.NewReader(data))
+	req, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("http://%s:%d%s", c.ip, RokuPort, endpoint), strings.NewReader(data))
 	if err != nil {
 		return fmt.Errorf("failed to create request for %s%s: %w", c.ip, endpoint, err)
 	}

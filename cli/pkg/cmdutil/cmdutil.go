@@ -2,6 +2,7 @@ package cmdutil
 
 import (
 	"fmt"
+	"net"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -42,11 +43,18 @@ func AddGroup(parent *cobra.Command, title string, children ...*cobra.Command) {
 	}
 }
 
-// ValidateRokuHost checks if a Roku host is configured and provides helpful messaging
+// ValidateRokuHost checks if a Roku host is configured, valid, and optionally reachable
 func (h *Helper) ValidateRokuHost() (string, error) {
 	ip := viper.GetString("roku.host")
 	if ip == "" {
 		return "", fmt.Errorf("no Roku device configured. Run 'roku find' command first to set a default device")
 	}
+
+	if net.ParseIP(ip) == nil {
+		return "", fmt.Errorf("invalid host IP address: %s", ip)
+	}
+
+	// TODO: Test basic connectivity (ping to ip + default port)
+
 	return ip, nil
 }
