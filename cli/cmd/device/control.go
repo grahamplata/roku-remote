@@ -75,7 +75,7 @@ func ControlCmd(ch *cmdutil.Helper) *cobra.Command {
 				return fmt.Errorf("invalid Roku host: %w", err)
 			}
 			device := roku.NewDevice(ip)
-			p := tea.NewProgram(&model{device: device, ctx: ctx})
+			p := tea.NewProgram(&controlModel{device: device, ctx: ctx})
 			if _, err := p.Run(); err != nil {
 				return err
 			}
@@ -85,8 +85,8 @@ func ControlCmd(ch *cmdutil.Helper) *cobra.Command {
 	return controlCmd
 }
 
-// model represents the state of the device control interface
-type model struct {
+// controlModel represents the state of the device control interface
+type controlModel struct {
 	// ctx is the context for device actions.
 	ctx context.Context
 	// device represents the target device to control.
@@ -96,12 +96,12 @@ type model struct {
 }
 
 // Init initializes the model
-func (m model) Init() tea.Cmd {
+func (m controlModel) Init() tea.Cmd {
 	return nil
 }
 
 // Update handles incoming messages and updates the model accordingly.
-func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *controlModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Check for context cancellation to handle graceful shutdown
 	select {
 	case <-m.ctx.Done():
@@ -138,12 +138,12 @@ type successMsg struct {
 	cmd string
 }
 
-func (m model) View() string {
+func (m controlModel) View() string {
 	return fmt.Sprintf("%s\n\n%s", m.statusMessage, helpText)
 }
 
 // handleKeyPress processes a key press and sends the corresponding command to the Roku device.
-func (m *model) handleKeyPress(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *controlModel) handleKeyPress(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		// Handle quit
@@ -164,7 +164,7 @@ func (m *model) handleKeyPress(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // sendCommand sends a command to the device asynchronously and updates the status.
-func (m *model) sendCommand(cmd string) tea.Cmd {
+func (m *controlModel) sendCommand(cmd string) tea.Cmd {
 	return tea.Cmd(func() tea.Msg {
 		err := m.device.Action(m.ctx, cmd)
 		if err != nil {
