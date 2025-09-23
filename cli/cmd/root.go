@@ -60,6 +60,7 @@ func RootCmd(ch *cmdutil.Helper, cfg *Config) *cobra.Command {
 
 	// Device Commands
 	cmdutil.AddGroup(rootCmd, "device",
+		device.ControlCmd(ch),
 		device.DescribeCmd(ch),
 		device.FindCmd(ch),
 		device.LiveCmd(ch),

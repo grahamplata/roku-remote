@@ -27,6 +27,7 @@ app
   list        List the applications on your Roku.
 
 device
+  control     Control a Roku device via keyboard
   describe    Describes the currently selected Roku
   find        Find Roku Remotes on your local network.
   live        Status of the Roku media player.
@@ -52,8 +53,8 @@ roku-remote find
 
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Select a default Roku from your network:
-  ▸ http://192.168.10.95:8060/
-    http://192.168.10.122:8060/
+  ▸ http://192.168.10.95
+    http://192.168.10.122
 ```
 
 ## Notes
