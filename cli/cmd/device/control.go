@@ -153,6 +153,7 @@ func (m *model) handleKeyPress(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Map key presses to Roku commands
 		if cmd, exists := keyCommands[msg.String()]; exists {
+			m.statusMessage = fmt.Sprintf("Sending '%s'...", cmd)
 			return m, m.sendCommand(cmd)
 		}
 
