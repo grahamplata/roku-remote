@@ -34,6 +34,18 @@ archives:
       - goos: windows
         formats: [zip]
 
+brews:
+  - repository:
+      owner: grahamplata
+      name: homebrew-tap
+    homepage: "https://github.com/grahamplata/roku-remote"
+    description: "A CLI tool for managing Roku devices remotely"
+    license: "MIT"
+    install: |
+      bin.install "roku-remote"
+    test: |
+      system "#{bin}/roku-remote --version"
+
 changelog:
   sort: asc
   filters:
