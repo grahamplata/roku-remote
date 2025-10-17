@@ -3,6 +3,7 @@ package cmdutil
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -54,7 +55,13 @@ func (h *Helper) ValidateRokuHost() (string, error) {
 		return "", fmt.Errorf("invalid host IP address: %s", ip)
 	}
 
-	// TODO: Test basic connectivity (ping to ip + default port)
+	// Test basic connectivity to Roku device on port 8060
+	address := fmt.Sprintf("%s:8060", ip)
+	conn, err := net.DialTimeout("tcp", address, 3*time.Second)
+	if err != nil {
+		return "", fmt.Errorf("unable to connect to Roku device at %s: %w\n\nPlease ensure:\n  • The Roku device is powered on\n  • The device is connected to the same network\n  • The IP address is correct (run 'roku-remote device find' to re-scan)", ip, err)
+	}
+	conn.Close()
 
 	return ip, nil
 }
