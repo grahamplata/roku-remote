@@ -36,7 +36,7 @@ func TestNewDevice(t *testing.T) {
 func TestDevice_Info(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <root xmlns="urn:schemas-upnp-org:device-1-0">
 	<specVersion><major>1</major><minor>0</minor></specVersion>
 	<device>
@@ -57,7 +57,7 @@ func TestDevice_Info(t *testing.T) {
 func TestDevice_DeviceInfo(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <device-info>
 	<serial-number>TEST123</serial-number>
 	<model-name>Roku Ultra</model-name>
@@ -105,7 +105,7 @@ func TestDevice_Launch(t *testing.T) {
 func TestDevice_Player(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <player state="play">
 	<plugin id="12" name="Netflix"/>
 </player>`))
@@ -123,7 +123,7 @@ func TestDevice_Player(t *testing.T) {
 func TestDevice_Describe(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <device-info>
 	<serial-number>XYZ789</serial-number>
 </device-info>`))
@@ -155,7 +155,7 @@ func TestDevice_Install(t *testing.T) {
 func TestDevice_FetchInstalledApps(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <apps>
 	<app id="12">Netflix</app>
 	<app id="13">YouTube</app>
@@ -175,7 +175,7 @@ func TestDevice_FetchInstalledApps(t *testing.T) {
 func TestDevice_ActiveApp(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+		_, _ = w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
 <active-app>
 	<app id="12">Netflix</app>
 </active-app>`))
