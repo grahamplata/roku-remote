@@ -162,7 +162,7 @@ func (c *Client) post(ctx context.Context, endpoint string, data string) error {
 		return fmt.Errorf("failed to perform request to %s%s: %w", c.ip, endpoint, err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("unexpected status %d from %s%s", resp.StatusCode, c.ip, endpoint)
 	}
 	return nil
