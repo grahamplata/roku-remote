@@ -25,9 +25,7 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6.4.0
         with:
-          distribution: goreleaser
-          version: latest
-          args: release
+          version: '~> v2'
+          args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
