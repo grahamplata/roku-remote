@@ -22,23 +22,24 @@ type Config struct {
 	CfgFile string
 }
 
-func Run(ctx context.Context) {
+func Run(ctx context.Context, version string) {
 	cfg := &Config{}
 	ch, err := cmdutil.NewHelper()
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 
-	err = RootCmd(ch, cfg).ExecuteContext(ctx)
+	err = RootCmd(ch, cfg, version).ExecuteContext(ctx)
 	code := HandleExecuteError(ch, err)
 	os.Exit(code)
 }
 
-func RootCmd(ch *cmdutil.Helper, cfg *Config) *cobra.Command {
+func RootCmd(ch *cmdutil.Helper, cfg *Config, version string) *cobra.Command {
 	var rootCmd = &cobra.Command{
-		Use:   "roku",
-		Short: "A cli tool to interact with roku devices on your local network.",
-		Long:  `Using SSDP (Simple Service Discovery Protocol) access your Roku's RESTful API`,
+		Use:     "roku",
+		Short:   "A cli tool to interact with roku devices on your local network.",
+		Long:    `Using SSDP (Simple Service Discovery Protocol) access your Roku's RESTful API`,
+		Version: version,
 	}
 
 	rootCmd.PersistentFlags().StringVar(&cfg.CfgFile, "config", "", "config file (default is $HOME/.roku-remote.yaml)")
