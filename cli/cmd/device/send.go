@@ -42,7 +42,10 @@ func runSend(ctx context.Context, ip string) error {
 		return err
 	}
 
-	finalModel := m.(sendModel)
+	finalModel, ok := m.(sendModel)
+	if !ok {
+		return fmt.Errorf("unexpected model type returned from tea.Program")
+	}
 	if finalModel.selected >= 0 {
 		selectedAction := actionNames[finalModel.selected]
 		device := roku.NewDevice(ip)
@@ -78,6 +81,13 @@ func (m sendModel) Init() tea.Cmd {
 }
 
 func (m sendModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Check for context cancellation
+	select {
+	case <-m.ctx.Done():
+		return m, tea.Quit
+	default:
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {

@@ -1,6 +1,7 @@
 package device
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -25,6 +26,7 @@ This command uses Simple Service Discovery Protocol (or SSDP) which
 provides a mechanism where by network clients, with little or no
 static configuration, can discover network services.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmd.Context()
 			wait, err := cmd.Flags().GetInt("wait")
 			if err != nil {
 				return fmt.Errorf("unable to complete (find) command: %w", err)
@@ -34,26 +36,29 @@ static configuration, can discover network services.`,
 			if err != nil {
 				return fmt.Errorf("unable to complete (find) command: %w", err)
 			}
-			return runFind(devices)
+			return runFind(ctx, devices)
 		},
 	}
 	findCmd.Flags().IntP("wait", "w", DefaultScanTime, "Duration in seconds to scan for devices")
 	return findCmd
 }
 
-func runFind(devices []roku.Device) error {
+func runFind(ctx context.Context, devices []roku.Device) error {
 	if len(devices) == 0 {
 		fmt.Println("No Roku devices found on your network.")
 		return nil
 	}
 
-	p := tea.NewProgram(initialFindModel(devices))
+	p := tea.NewProgram(initialFindModel(ctx, devices))
 	m, err := p.Run()
 	if err != nil {
 		return err
 	}
 
-	finalModel := m.(findModel)
+	finalModel, ok := m.(findModel)
+	if !ok {
+		return fmt.Errorf("unexpected model type returned from tea.Program")
+	}
 	if finalModel.selected >= 0 {
 		selectedIP := devices[finalModel.selected].IP
 		var deviceIPs []string
@@ -62,7 +67,9 @@ func runFind(devices []roku.Device) error {
 		}
 		viper.Set("roku.devices", deviceIPs)
 		viper.Set("roku.host", selectedIP)
-		AddToConfigFile()
+		if err := AddToConfigFile(); err != nil {
+			return fmt.Errorf("failed to save device configuration: %w", err)
+		}
 	}
 	return nil
 }
@@ -71,13 +78,15 @@ type findModel struct {
 	devices  []roku.Device
 	cursor   int
 	selected int // -1 means no selection
+	ctx      context.Context
 }
 
-func initialFindModel(devices []roku.Device) findModel {
+func initialFindModel(ctx context.Context, devices []roku.Device) findModel {
 	return findModel{
 		devices:  devices,
 		cursor:   0,
 		selected: -1,
+		ctx:      ctx,
 	}
 }
 
@@ -86,6 +95,13 @@ func (m findModel) Init() tea.Cmd {
 }
 
 func (m findModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Check for context cancellation
+	select {
+	case <-m.ctx.Done():
+		return m, tea.Quit
+	default:
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -123,18 +139,17 @@ func (m findModel) View() string {
 }
 
 // AddToConfigFile add a key value pair to specified .roku-remote.yaml
-func AddToConfigFile() {
+func AddToConfigFile() error {
 	home, err := homedir.Dir()
 	if err != nil {
-		fmt.Printf("Error finding home directory: %v\n", err)
-		return
+		return fmt.Errorf("error finding home directory: %w", err)
 	}
 
 	path := filepath.Join(home, ".roku-remote.yaml")
 	if err := viper.WriteConfigAs(path); err != nil {
-		fmt.Printf("Error writing config file: %v\n", err)
-		return
+		return fmt.Errorf("error writing config file: %w", err)
 	}
 	fmt.Printf("Updated config file: %s\n", path)
 	fmt.Printf("Default Roku device set to: %s\n", viper.GetString("roku.host"))
+	return nil
 }

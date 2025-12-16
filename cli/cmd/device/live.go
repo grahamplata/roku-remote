@@ -13,19 +13,17 @@ func LiveCmd(ch *cmdutil.Helper) *cobra.Command {
 		Use:   "live",
 		Short: "Status of the Roku media player.",
 		Long:  `Status and details about the current state of the Roku's media player.`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			ip, err := ch.ValidateRokuHost()
 			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
+				return err
 			}
 
 			r := roku.NewDevice(ip)
 			player, err := r.Player(ctx)
 			if err != nil {
-				fmt.Printf("Error getting player status: %v\n", err)
-				return
+				return fmt.Errorf("error getting player status: %w", err)
 			}
 			fmt.Printf("Player state: %s\n", player.State)
 			if player.Error != "" {
@@ -38,6 +36,7 @@ func LiveCmd(ch *cmdutil.Helper) *cobra.Command {
 				fmt.Printf("Position: %s\n", player.Position)
 			}
 			fmt.Printf("Live: %t\n", player.Live)
+			return nil
 		},
 	}
 
