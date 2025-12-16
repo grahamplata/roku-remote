@@ -16,18 +16,16 @@ func ListCmd(ch *cmdutil.Helper) *cobra.Command {
 		Long: `List the applications on your Roku.
 
 Usage: roku-remote apps list`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			ip, err := ch.ValidateRokuHost()
 			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
+				return err
 			}
 			r := roku.NewDevice(ip)
 			apps, err := r.FetchInstalledApps(ctx)
 			if err != nil {
-				fmt.Printf("Error fetching apps: %v\n", err)
-				return
+				return fmt.Errorf("error fetching apps: %w", err)
 			}
 			// Sort apps by name
 			sort.Slice(apps.Apps, func(i, j int) bool {
@@ -36,6 +34,7 @@ Usage: roku-remote apps list`,
 			for _, app := range apps.Apps {
 				fmt.Printf("%s (ID: %s)\n", app.Name, app.ID)
 			}
+			return nil
 		},
 	}
 	return listCmd

@@ -21,12 +21,11 @@ Examples:
   
 Use 'roku apps list' to see available applications and their IDs.`,
 		Args: cobra.ExactArgs(1), // Ensure exactly one argument
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			ip, err := ch.ValidateRokuHost()
 			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
+				return err
 			}
 
 			appID := args[0]
@@ -34,8 +33,7 @@ Use 'roku apps list' to see available applications and their IDs.`,
 			// Validate app exists
 			apps, err := device.FetchInstalledApps(ctx)
 			if err != nil {
-				fmt.Printf("Error fetching apps: %v\n", err)
-				return
+				return fmt.Errorf("error fetching apps: %w", err)
 			}
 			var actualID string
 			for _, app := range apps.Apps {
@@ -48,15 +46,14 @@ Use 'roku apps list' to see available applications and their IDs.`,
 				}
 			}
 			if actualID == "" {
-				fmt.Printf("App '%s' not found. Use 'roku apps list' to see available apps.\n", appID)
-				return
+				return fmt.Errorf("app '%s' not found. Use 'roku apps list' to see available apps", appID)
 			}
 			err = device.Launch(ctx, actualID)
 			if err != nil {
-				fmt.Printf("Error launching app: %v\n", err)
-			} else {
-				fmt.Printf("App '%s' launched successfully.\n", appID)
+				return fmt.Errorf("error launching app: %w", err)
 			}
+			fmt.Printf("App '%s' launched successfully.\n", appID)
+			return nil
 		},
 	}
 

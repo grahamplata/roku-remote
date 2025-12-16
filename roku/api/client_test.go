@@ -494,6 +494,7 @@ func TestClient_ContextCancellation(t *testing.T) {
 		_, err := client.Info(ctx)
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "failed to perform request")
+		// With retry logic, context cancellation is detected by retryWithBackoff
+		assert.Contains(t, err.Error(), "context canceled")
 	})
 }

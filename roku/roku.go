@@ -14,6 +14,14 @@ const RokuIdentifier = "roku:ecp"
 
 // Find searches for Roku devices on the local network
 func Find(ScanDuration int) (devices []Device, err error) {
+	// Validate scan duration is within reasonable bounds
+	if ScanDuration < 1 {
+		return nil, fmt.Errorf("scan duration must be at least 1 second, got %d", ScanDuration)
+	}
+	if ScanDuration > 60 {
+		return nil, fmt.Errorf("scan duration must be at most 60 seconds, got %d", ScanDuration)
+	}
+
 	found, err := ssdp.Search(RokuIdentifier, ScanDuration, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to search for Roku devices: %w", err)

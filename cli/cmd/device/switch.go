@@ -1,6 +1,7 @@
 package device
 
 import (
+	"context"
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,30 +16,36 @@ func SwitchCmd(ch *cmdutil.Helper) *cobra.Command {
 		Short: "Switch the default Roku device.",
 		Long:  `Select a different Roku device from the stored list to set as the default.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmd.Context()
 			devices := viper.GetStringSlice("roku.devices")
 			if len(devices) == 0 {
 				fmt.Println("No devices stored. Run 'roku find' to discover and store devices.")
 				return nil
 			}
-			return runSwitch(devices)
+			return runSwitch(ctx, devices)
 		},
 	}
 
 	return switchCmd
 }
 
-func runSwitch(devices []string) error {
-	p := tea.NewProgram(initialSwitchModel(devices))
+func runSwitch(ctx context.Context, devices []string) error {
+	p := tea.NewProgram(initialSwitchModel(ctx, devices))
 	m, err := p.Run()
 	if err != nil {
 		return err
 	}
 
-	finalModel := m.(switchModel)
+	finalModel, ok := m.(switchModel)
+	if !ok {
+		return fmt.Errorf("unexpected model type returned from tea.Program")
+	}
 	if finalModel.selected >= 0 {
 		selectedIP := devices[finalModel.selected]
 		viper.Set("roku.host", selectedIP)
-		AddToConfigFile()
+		if err := AddToConfigFile(); err != nil {
+			return fmt.Errorf("failed to save device configuration: %w", err)
+		}
 	}
 	return nil
 }
@@ -47,13 +54,15 @@ type switchModel struct {
 	devices  []string
 	cursor   int
 	selected int
+	ctx      context.Context
 }
 
-func initialSwitchModel(devices []string) switchModel {
+func initialSwitchModel(ctx context.Context, devices []string) switchModel {
 	return switchModel{
 		devices:  devices,
 		cursor:   0,
 		selected: -1,
+		ctx:      ctx,
 	}
 }
 
@@ -62,6 +71,13 @@ func (m switchModel) Init() tea.Cmd {
 }
 
 func (m switchModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Check for context cancellation
+	select {
+	case <-m.ctx.Done():
+		return m, tea.Quit
+	default:
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {

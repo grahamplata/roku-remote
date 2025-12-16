@@ -16,33 +16,26 @@ func AddCmd(ch *cmdutil.Helper) *cobra.Command {
 		Long: `Add applications by name or id to your Roku.
 
 Usage: roku-remote apps add netflix`,
-		Run: func(cmd *cobra.Command, args []string) {
+		Args: cobra.MinimumNArgs(1), // Ensure at least one argument
+		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			ip, err := ch.ValidateRokuHost()
 			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
-			}
-			if len(args) == 0 {
-				fmt.Println("You must provide an application name or id to add.")
-				return
+				return err
 			}
 			appID := strings.TrimSpace(args[0])
 			if appID == "" {
-				fmt.Println("You must provide an application name or id to add.")
-				return
+				return fmt.Errorf("you must provide an application name or id to add")
 			}
 			device := roku.NewDevice(ip)
 			// Check if app already exists
 			apps, err := device.FetchInstalledApps(ctx)
 			if err != nil {
-				fmt.Printf("Error fetching apps: %v\n", err)
-				return
+				return fmt.Errorf("error fetching apps: %w", err)
 			}
 			for _, app := range apps.Apps {
 				if strings.EqualFold(app.ID, appID) || strings.EqualFold(app.Name, appID) {
-					fmt.Printf("App '%s' is already installed.\n", appID)
-					return
+					return fmt.Errorf("app '%s' is already installed", appID)
 				}
 			}
 
@@ -57,15 +50,14 @@ Usage: roku-remote apps add netflix`,
 				}
 			}
 			if actualID == "" {
-				fmt.Printf("App '%s' not found in Roku store. Please check the app name or use an app ID.\n", appID)
-				return
+				return fmt.Errorf("app '%s' not found in Roku store. Please check the app name or use an app ID", appID)
 			}
 			err = device.Install(ctx, actualID)
 			if err != nil {
-				fmt.Printf("Error installing app: %v\n", err)
-			} else {
-				fmt.Println("App installed successfully.")
+				return fmt.Errorf("error installing app: %w", err)
 			}
+			fmt.Println("App installed successfully.")
+			return nil
 		},
 	}
 
